@@ -25,7 +25,9 @@ func main() {
 		Usage()
 		os.Exit(1)
 	}
+
 	static := StaticFileHandler(path.Join(dataDir, "www"))
+	http.Handle("/", NewUIServer())
 	http.Handle("/css/", static)
 	http.Handle("/images/", static)
 	http.Handle("/js/", static)

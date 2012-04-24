@@ -1,0 +1,25 @@
+@font-face {
+    font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Inconsolata'), url('/css/Inconsolata.woff') format('woff');
+}
+
+body {
+    font-family: Inconsolata, monospace;
+    font-size: 10pt;
+}
+
+#container {
+    margin: 10px auto 10px auto;
+    border: 1px solid black;
+}
+
+#container .input {
+    border-top: 1px solid black;
+}
+
+#container .input textarea {
+    border: none;
+    width: 100%;
+}
