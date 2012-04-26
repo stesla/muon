@@ -13,6 +13,15 @@ body {
 #container {
     margin: 10px auto 10px auto;
     border: 1px solid black;
+    width: 96ex;
+}
+
+#container .output {
+    padding: 5px;
+}
+
+#container .output p {
+    margin: 0px;
 }
 
 #container .input {
