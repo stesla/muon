@@ -31,5 +31,6 @@ func main() {
 	http.Handle("/css/", static)
 	http.Handle("/images/", static)
 	http.Handle("/js/", static)
+	http.HandleFunc("/connect", ConnectServer)
 	log.Fatal(http.ListenAndServe(*listenAddr, nil))
 }

@@ -18,6 +18,7 @@ body {
 
 #container .output {
     padding: 5px;
+    white-space: pre;
 }
 
 #container .output p {
