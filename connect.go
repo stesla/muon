@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"code.google.com/p/go.net/websocket"
+	"fmt"
 	"github.com/stesla/gotelnet"
 	"log"
 	"net/http"
@@ -10,9 +11,10 @@ import (
 )
 
 func ConnectServer(w http.ResponseWriter, r *http.Request) {
-	// TODO: do some sort of argument parsing here
-	conn, err := gotelnet.Dial("localhost:2860")
+	addr := fmt.Sprintf("%s:%s", r.FormValue("host"), r.FormValue("port"))
+	conn, err := gotelnet.Dial(addr)
 	if err != nil {
+		log.Println("Error: Dial:", err)
 		w.WriteHeader(500);
 		return
 	}

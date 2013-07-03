@@ -10,10 +10,16 @@ body {
     font-size: 10pt;
 }
 
+#oneChar {
+    position: absolute;
+    visibility: hidden;
+    height: auto;
+    width: auto;
+}
+
 #container {
     margin: 10px auto 10px auto;
     border: 1px solid black;
-    width: 96ex;
 }
 
 #container .output {

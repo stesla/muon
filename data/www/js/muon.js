@@ -1,9 +1,9 @@
-(function() {
+(function(window) {
     var input_, output_, ws_;
 
     function connect(fn) {
         //TODO: wss when we're https
-        var ws = new WebSocket("ws://" + window.location.host + "/connect");
+        var ws = new WebSocket("ws://" + window.location.host + "/connect" + window.location.search);
         ws.onopen = function() {
             fn("Connected!");
         }
@@ -25,7 +25,11 @@
         }
     }
 
-    window.onload = function() {
+    window.addEventListener('load', function() {
+        var oneChar = document.getElementById('oneChar');
+        var sheets = document.styleSheets;
+        var sheet = sheets[sheets.length - 1];
+        sheet.insertRule('#container { width: ' + 80 * oneChar.clientWidth + 'px }', 0);
         input_ = document.querySelector('#container .input textarea');
         output_ = document.querySelector('#container .output');
         input_.addEventListener('keydown', processInput);
@@ -35,5 +39,5 @@
             output_.appendChild(line);
             input_.scrollIntoView();
         });
-    };
-})();
+    });
+})(window);
