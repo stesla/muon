@@ -10,6 +10,8 @@ import (
 	"unicode/utf8"
 )
 
+const lineEnding = "\n"
+
 func ConnectServer(w http.ResponseWriter, r *http.Request) {
 	addr := fmt.Sprintf("%s:%s", r.FormValue("host"), r.FormValue("port"))
 	conn, err := gotelnet.Dial(addr)
@@ -24,7 +26,6 @@ func ConnectServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func forward(down *websocket.Conn, up gotelnet.Conn) {
-	lineEnding := "\n";
 	exit := make(chan bool)
 	go func() {
 		b := bufio.NewReader(up)
