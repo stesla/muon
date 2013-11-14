@@ -17,11 +17,11 @@ func ConnectServer(w http.ResponseWriter, r *http.Request) {
 	conn, err := gotelnet.Dial(addr)
 	if err != nil {
 		log.Println("Error: Dial:", err)
-		w.WriteHeader(500);
+		w.WriteHeader(500)
 		return
 	}
 	websocket.Handler(func(ws *websocket.Conn) {
-		forward(ws, conn);
+		forward(ws, conn)
 	}).ServeHTTP(w, r)
 }
 
@@ -56,11 +56,11 @@ func forward(down *websocket.Conn, up gotelnet.Conn) {
 		for {
 			var msg string
 			if rerr := websocket.Message.Receive(down, &msg); rerr != nil {
-				log.Println("Error: Receive:", rerr);
+				log.Println("Error: Receive:", rerr)
 				break
 			}
 			if _, werr := up.Write([]byte(msg + lineEnding)); werr != nil {
-				log.Println("Error: Write:", werr);
+				log.Println("Error: Write:", werr)
 				break
 			}
 		}

@@ -11,7 +11,7 @@ import (
 
 var (
 	listenAddr = flag.String("http", ":8080", "")
-	dataDir = ""
+	dataDir    = ""
 )
 
 func Usage() {

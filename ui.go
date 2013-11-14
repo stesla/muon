@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-type UIServer struct {}
+type UIServer struct{}
 
 func NewUIServer() http.Handler {
 	return &UIServer{}
