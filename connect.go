@@ -15,7 +15,7 @@ import (
 
 const lineEnding = "\n"
 
-func ConnectServer(w http.ResponseWriter, r *http.Request) {
+func connect(w http.ResponseWriter, r *http.Request) {
 	addr := fmt.Sprintf("%s:%s", r.FormValue("host"), r.FormValue("port"))
 	conn, err := gotelnet.Dial(addr)
 	if err != nil {
