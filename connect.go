@@ -5,10 +5,13 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"fmt"
 	"github.com/stesla/gotelnet"
+	"io"
 	"log"
 	"net/http"
 	"unicode/utf8"
 )
+
+//TODO: remove error logging that shouldn't really be there
 
 const lineEnding = "\n"
 
@@ -21,17 +24,34 @@ func ConnectServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	websocket.Handler(func(ws *websocket.Conn) {
-		makeProxy(ws, conn).run()
+		makeProxy(wsconn{ws}, conn).run()
 	}).ServeHTTP(w, r)
 }
 
+type wsconn struct {
+	*websocket.Conn
+}
+
+func (ws wsconn) Send(in string) error {
+	return websocket.Message.Send(ws.Conn, in)
+}
+
+func (ws wsconn) Receive(out *string) error {
+	return websocket.Message.Receive(ws.Conn, out)
+}
+
+type ReceiveSender interface {
+	Receive(out *string) error
+	Send(in string) error
+}
+
 type proxy struct {
-	client *websocket.Conn
-	server gotelnet.Conn
+	client ReceiveSender
+	server io.ReadWriter
 	done   chan bool
 }
 
-func makeProxy(client *websocket.Conn, server gotelnet.Conn) *proxy {
+func makeProxy(client ReceiveSender, server io.ReadWriter) *proxy {
 	return &proxy{
 		client: client,
 		server: server,
@@ -48,7 +68,7 @@ func (pr *proxy) run() {
 func (pr *proxy) processInput() {
 	for {
 		var msg string
-		if rerr := websocket.Message.Receive(pr.client, &msg); rerr != nil {
+		if rerr := pr.client.Receive(&msg); rerr != nil {
 			log.Println("Error: Receive:", rerr)
 			break
 		}
@@ -77,7 +97,7 @@ func (pr *proxy) processOutput() {
 			runes = append(runes, r)
 			line = line[n:]
 		}
-		werr := websocket.Message.Send(pr.client, string(runes))
+		werr := pr.client.Send(string(runes))
 		if werr != nil {
 			log.Println("Error: Send:", werr)
 			break
