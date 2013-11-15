@@ -21,50 +21,67 @@ func ConnectServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	websocket.Handler(func(ws *websocket.Conn) {
-		forward(ws, conn)
+		makeProxy(ws, conn).run()
 	}).ServeHTTP(w, r)
 }
 
-func forward(down *websocket.Conn, up gotelnet.Conn) {
-	exit := make(chan bool)
-	go func() {
-		b := bufio.NewReader(up)
-		for {
-			line, _, err := b.ReadLine()
-			if err != nil {
-				log.Println("Error: ReadLine:", err)
-				break
-			}
-			runes := []rune{}
-			for len(line) > 0 {
-				r, n := utf8.DecodeRune(line)
-				if r == utf8.RuneError {
-					r = '?'
-				}
-				runes = append(runes, r)
-				line = line[n:]
-			}
-			werr := websocket.Message.Send(down, string(runes))
-			if werr != nil {
-				log.Println("Error: Send:", werr)
-				break
-			}
+type proxy struct {
+	client *websocket.Conn
+	server gotelnet.Conn
+	done   chan bool
+}
+
+func makeProxy(client *websocket.Conn, server gotelnet.Conn) *proxy {
+	return &proxy{
+		client: client,
+		server: server,
+		done:   make(chan bool),
+	}
+}
+
+func (pr *proxy) run() {
+	go pr.processInput()
+	go pr.processOutput()
+	<-pr.done
+}
+
+func (pr *proxy) processInput() {
+	for {
+		var msg string
+		if rerr := websocket.Message.Receive(pr.client, &msg); rerr != nil {
+			log.Println("Error: Receive:", rerr)
+			break
 		}
-		exit <- true
-	}()
-	go func() {
-		for {
-			var msg string
-			if rerr := websocket.Message.Receive(down, &msg); rerr != nil {
-				log.Println("Error: Receive:", rerr)
-				break
-			}
-			if _, werr := up.Write([]byte(msg + lineEnding)); werr != nil {
-				log.Println("Error: Write:", werr)
-				break
-			}
+		if _, werr := pr.server.Write([]byte(msg + lineEnding)); werr != nil {
+			log.Println("Error: Write:", werr)
+			break
 		}
-		exit <- true
-	}()
-	<-exit
+	}
+	pr.done <- true
+}
+
+func (pr *proxy) processOutput() {
+	r := bufio.NewReader(pr.server)
+	for {
+		line, _, err := r.ReadLine()
+		if err != nil {
+			log.Println("Error: ReadLine:", err)
+			break
+		}
+		runes := []rune{}
+		for len(line) > 0 {
+			r, n := utf8.DecodeRune(line)
+			if r == utf8.RuneError {
+				r = '?'
+			}
+			runes = append(runes, r)
+			line = line[n:]
+		}
+		werr := websocket.Message.Send(pr.client, string(runes))
+		if werr != nil {
+			log.Println("Error: Send:", werr)
+			break
+		}
+	}
+	pr.done <- true
 }
