@@ -1,0 +1,46 @@
+@font-face {
+    font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Inconsolata'), url('/css/Inconsolata.woff') format('woff');
+}
+
+body {
+    font-family: Inconsolata, monospace;
+    font-size: 10pt;
+}
+
+body, input, textarea {
+    background-color: black;
+    color: white;
+}
+
+#oneChar {
+    position: absolute;
+    visibility: hidden;
+    height: auto;
+    width: auto;
+}
+
+#container {
+    margin: 10px auto 10px auto;
+    border: 1px solid white;
+}
+
+#container .output {
+    padding: 5px;
+    white-space: pre-wrap;
+}
+
+#container .output p {
+    margin: 0px;
+}
+
+#container .input {
+    border-top: 1px solid white;
+}
+
+#container .input textarea {
+    border: none;
+    width: 100%;
+}
