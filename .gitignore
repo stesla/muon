@@ -1,2 +1,4 @@
 bin/
 pkg/
+*.db
+src/muon/add_user/add_user

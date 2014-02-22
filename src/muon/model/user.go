@@ -18,7 +18,7 @@ var InvalidUserOrPass = errors.New("invalid username or password")
 const pwCost = bcrypt.DefaultCost
 
 func createUsersTable() error {
-	sql :=`CREATE IF NOT EXISTS users (
+	sql :=`CREATE TABLE IF NOT EXISTS users (
 		   id        INTEGER      PRIMARY KEY,
 		   login     VARCHAR(32)  UNIQUE NOT NULL,
 		   email     VARCHAR(255) UNIQUE NOT NULL,
@@ -27,7 +27,7 @@ func createUsersTable() error {
 	return err
 }
 
-func CreateUser(login, pw, email string) (*User, error) {
+func CreateUser(login, email, pw string) (*User, error) {
 	var err error
 
 	user := &User{Login: login, Email: email}
