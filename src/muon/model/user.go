@@ -49,10 +49,8 @@ func CreateUser(login, email, pw string) (*User, error) {
 	return user, nil
 }
 
-func FindUser(login string) (*User, error) {
-	row := db.QueryRow(
-		`SELECT id, login, email, pwhash
-		 FROM users WHERE login = ?`, login)
+func FindUserBySQL(query string, params ...interface{}) (*User, error) {
+	row := db.QueryRow(query, params...)
 	user := &User{}
 	err := row.Scan(&user.Id, &user.Login, &user.Email, &user.pwhash)
 	if err == sql.ErrNoRows {
@@ -63,8 +61,20 @@ func FindUser(login string) (*User, error) {
 	return user, nil
 }
 
+func FindUser(id int64) (*User, error) {
+	return FindUserBySQL(
+		`SELECT id, login, email, pwhash
+		 FROM users WHERE id = ?`, id)
+}
+
+func FindUserByLogin(login string) (*User, error) {
+	return FindUserBySQL(
+		`SELECT id, login, email, pwhash
+		 FROM users WHERE login = ?`, login)
+}
+
 func AuthUser(login, pw string) (*User, error) {
-	user, err := FindUser(login)
+	user, err := FindUserByLogin(login)
 	if err == NotFound {
 		return nil, InvalidUserOrPass
 	} else if err != nil {
