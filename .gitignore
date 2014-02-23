@@ -2,3 +2,4 @@ bin/
 pkg/
 *.db
 src/muon/add_user/add_user
+src/muon/server/server
