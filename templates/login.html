@@ -5,9 +5,16 @@
   <link rel="stylesheet" href="/css/muon.css">
 </head>
 <body>
-  <form action="/login" method="post">
-    <label>Login:</label> <input type="text" name="login"/><br/>
-    <label>Password:</label><input type="password" name="pw"/><br/>
+  <form id="login" method="post">
+    <label for="login">Username</label>
+    <br/>
+    <input type="text" id="login" name="login"/>
+    <br/>
+    <label for="pw">Password</label>
+    <br/>
+    <input type="password" id="pw" name="pw"/>
+    <br/>
+    <br/>
     <input type="submit" value="Login"/>
   </form>
 </body>

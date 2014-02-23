@@ -44,3 +44,21 @@ body, input, textarea {
     border: none;
     width: 100%;
 }
+
+#login {
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10em;
+}
+
+#login input {
+    border: 1px solid white;
+    width: 100%;
+    padding: 2.5px;
+    margin: 0px 0px 1em 0px;
+}
+
+#login label {
+    font-weight: bolder;
+}
